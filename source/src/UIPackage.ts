@@ -176,7 +176,7 @@ export class UIPackage {
                     _instById[pkg.id] = pkg;
                     _instByName[pkg.name] = pkg;
                     if (pkg._path)
-                        _instByName[pkg._path] = pkg;
+                        _instById[pkg._path] = pkg;
 
                     if (onComplete != null)
                         onComplete(lastErr, pkg);
@@ -185,12 +185,27 @@ export class UIPackage {
 
             if (total > 0) {
                 urls.forEach((url, index) => {
-                    bundle.load(url, Asset, onProgress, taskComplete);
+                    if (url.includes("atlas")) {
+                        bundle.load(url + "/texture", Texture2D, onProgress, (err: Error | null, asset: Texture2D) => {
+                            pkg.setTexture(url, asset);
+                            taskComplete(err, asset);
+                        });
+                    } else {
+                        bundle.load(url, Asset, onProgress, taskComplete);
+                    }
                 });
             }
             else
                 taskComplete(null, null);
         });
+    }
+
+    private _textureMap:Map<string, Texture2D> = new Map();
+    private setTexture(name:string, texture:Texture2D) {
+        this._textureMap.set(name, texture);
+    }
+    private getTexture(name:string):Texture2D|undefined {
+        return this._textureMap.get(name);
     }
 
     public static removePackage(packageIdOrName: string): void {
@@ -568,7 +583,7 @@ export class UIPackage {
                     item.decoded = true;
                     var sprite: AtlasSprite = this._sprites[item.id];
                     if (sprite) {
-                        let atlasTexture: Texture2D = <Texture2D>this.getItemAsset(sprite.atlas);
+                        let atlasTexture: Texture2D = this.getTexture(sprite.atlas.file);// <Texture2D>this.getItemAsset(sprite.atlas);
                         if (atlasTexture) {
                             let sf = new SpriteFrame();
                             sf.texture = atlasTexture;
