@@ -515,6 +515,10 @@ export class UIPackage {
     }
 
     public dispose(): void {
+        this._textureMap.forEach((tex:Texture2D)=>{
+            assetManager.releaseAsset(tex);
+        })
+        this._textureMap.clear();
         var cnt: number = this._items.length;
         for (var i: number = 0; i < cnt; i++) {
             var pi: PackageItem = this._items[i];
