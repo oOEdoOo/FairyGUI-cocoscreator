@@ -307,6 +307,8 @@ export class GLoader extends GObject {
             this.setErrorState();
     }
 
+    private _asset?:Asset;
+
     protected loadExternal(): void {
         let url = this.url;
         let callback = (err: Error | null, asset: Asset) => {
@@ -317,6 +319,10 @@ export class GLoader extends GObject {
 
             if (err)
                 console.warn(err);
+
+            if (asset) {
+                this._asset = asset;
+            }
 
             if (asset instanceof SpriteFrame)
                 this.onExternalLoadSuccess(asset);
@@ -335,7 +341,10 @@ export class GLoader extends GObject {
     }
 
     protected freeExternal(texture: SpriteFrame): void {
-        assetManager.releaseAsset(texture);
+        if (this._asset) {
+            assetManager.releaseAsset(this._asset);
+            this._asset = undefined;
+        }
     }
 
     protected onExternalLoadSuccess(texture: SpriteFrame): void {
