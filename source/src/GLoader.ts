@@ -324,9 +324,9 @@ export class GLoader extends GObject {
                 this._asset = asset;
             }
 
-            if (asset instanceof SpriteFrame)
+            if (asset instanceof SpriteFrame){
                 this.onExternalLoadSuccess(asset);
-            else if (asset instanceof Texture2D) {
+            } else if (asset instanceof Texture2D) {
                 let sf = new SpriteFrame();
                 sf.texture = asset;
                 this.onExternalLoadSuccess(sf);
@@ -341,13 +341,16 @@ export class GLoader extends GObject {
     }
 
     protected freeExternal(texture: SpriteFrame): void {
-        if (this._asset) {
-            assetManager.releaseAsset(this._asset);
-            this._asset = undefined;
-        }
+        texture.decRef();
+        // if (this._asset) {
+        //     assetManager.releaseAsset(this._asset);
+        //     this._asset = undefined;
+        // }
     }
 
     protected onExternalLoadSuccess(texture: SpriteFrame): void {
+        texture.addRef();
+        
         this._content.spriteFrame = texture;
         this._content.type = Sprite.Type.SIMPLE;
         this.sourceWidth = texture.getRect().width;
