@@ -349,7 +349,7 @@ export class GLoader extends GObject {
     }
 
     protected freeExternal(texture: SpriteFrame): void {
-        texture.decRef();
+        // texture.decRef();
         // if (this._asset) {
         //     assetManager.releaseAsset(this._asset);
         //     this._asset = undefined;
@@ -357,7 +357,7 @@ export class GLoader extends GObject {
     }
 
     protected onExternalLoadSuccess(texture: SpriteFrame): void {
-        texture.addRef();
+        // texture.addRef();
         
         this._content.spriteFrame = texture;
         this._content.type = Sprite.Type.SIMPLE;

@@ -25,9 +25,11 @@ export class GRoot extends GComponent {
 
     private static _inst: GRoot;
 
-    public static get inst(): GRoot {
-        if (!GRoot._inst)
-            throw 'Call GRoot.create first!';
+    public static get inst(): GRoot|undefined {
+        if (!GRoot._inst) {
+            console.debug('Call GRoot.create first!');
+            return undefined;
+        }
 
         return GRoot._inst;
     }
